@@ -13,6 +13,7 @@
       Snake en <i><b>4K</b></i>
     </h1>
     <table id="game"></table>
+    <h2 id="score"></h2>
   </body>
 </html>
 
@@ -21,11 +22,13 @@
     background-color: black;
     color: white;
     text-align: -webkit-center;
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   }
 
   #game {
     border-spacing: 0;
     border: 1px solid white;
+    font-family: "Times New Roman", Times, serif;
   }
 
   .pixel {
@@ -38,7 +41,9 @@
 
 <script>
   // Variables Globales
+  let dirSet = false;
   let dir = "ArrowRight";
+  let score = -1;
   let x;
   let y;
 
@@ -50,18 +55,33 @@
   // Leer Teclas
   $("body").keydown((e) => {
     const key = e.key;
-    if (key == "ArrowUp" && dir != "ArrowDown") dir = key;
 
-    if (key == "ArrowDown" && dir != "ArrowUp") dir = key;
+    if (!dirSet) {
+      if (key == "ArrowUp" && dir != "ArrowDown") {
+        dir = key;
+        dirSet = true;
+      }
 
-    if (key == "ArrowRight" && dir != "ArrowLeft") dir = key;
+      if (key == "ArrowDown" && dir != "ArrowUp") {
+        dir = key;
+        dirSet = true;
+      }
 
-    if (key == "ArrowLeft" && dir != "ArrowRight") dir = key;
+      if (key == "ArrowRight" && dir != "ArrowLeft") {
+        dir = key;
+        dirSet = true;
+      }
+
+      if (key == "ArrowLeft" && dir != "ArrowRight") {
+        dir = key;
+        dirSet = true;
+      }
+    }
   });
 
   // Array de Mapas
   const map = [
-    " xxxxxxxxxxxxxxxxxxxxxxxxx ",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "x                         x",
     "x    ?????                x",
     "x                         x",
@@ -78,7 +98,7 @@
     "x     xx xx               x",
     "x                         x",
     "x                         x",
-    " xxxxxxxxxxxxxxxxxxxxxxxxx ",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
   ];
 
   // Renderizar Mapa
@@ -112,12 +132,14 @@
   async function game() {
     let gameover = false;
     let player = [];
-    let food;
+    let food = {};
 
-    // Inicializar Jugador
-    for (let k = 0; k < 5; k++) {
+    // Inicializar Jugador & food
+    for (let k = 0; k < 4; k++) {
       player[k] = { x: x - k, y: y };
     }
+
+    food = { x: x + 1, y: y };
 
     // Loop / Juego en curso
     while (!gameover) {
@@ -131,6 +153,8 @@
       });
 
       // Asignar direccion del jugador
+      dirSet = false;
+
       switch (dir) {
         case "ArrowUp": {
           y--;
@@ -157,6 +181,10 @@
       }
 
       // Heredar posiciones de los padres / Asignar posicion actual
+      if (x == food.x && y == food.y) {
+        player.push({ x: x - player.length - 1, y: y });
+      }
+
       for (let k = player.length - 1; k > 0; k--) {
         player[k].x = player[k - 1].x;
         player[k].y = player[k - 1].y;
@@ -165,7 +193,31 @@
       player[0].x = x;
       player[0].y = y;
 
-      // Renderizar jugador
+      // Posicion food + set Score
+      if (x == food.x && y == food.y) {
+        const xSize = map[0].length;
+        const ySize = map.length;
+        let oc = false;
+
+        // Comprobar que no esta spawneando donde no deberia.
+        while (!oc) {
+          oc = true;
+
+          food.x = Math.floor(Math.random() * xSize);
+          food.y = Math.floor(Math.random() * ySize);
+
+          player.forEach((value) => {
+            if (value.x == food.x && value.y == food.y) oc = false;
+          });
+
+          if (map[food.y][food.x] == "x") oc = false;
+        }
+
+        score++;
+        $("#score").text("Score: " + score);
+      }
+
+      // Renderizar jugador & Food
       for (let k = player.length - 1; k >= 0; k--) {
         const _x = player[k].x;
         const _y = player[k].y;
@@ -174,13 +226,17 @@
         // Color del jugador
         txt += "background-color: hsl(43, 89%, " + (38 - k) + "%);";
 
-        // Orientacion de ojitos.
+        // Orientacion ojitos
         if (dir == "ArrowRight" || dir == "ArrowLeft")
           txt += "writing-mode: vertical-rl;";
 
+        // Render Player
         $("#" + _x + "-" + _y).attr("style", txt);
-
         if (k == 0) $("#" + _x + "-" + _y).text("• •");
+
+        // Spawn food
+        $("#" + food.x + "-" + food.y).attr("style", "color: lightpink;");
+        $("#" + food.x + "-" + food.y).text("☻");
       }
 
       // Check Gameover
@@ -190,7 +246,7 @@
 
       if (map[y][x] == "x") gameover = true;
 
-      await sleep(200);
+      await sleep(150 - score * 6);
     }
   }
 
