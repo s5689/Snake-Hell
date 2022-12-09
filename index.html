@@ -4,10 +4,195 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="/jquery-3.6.1.min.js"></script>
-    <script src="/game.js"></script>
-    <title>Snake on ICE</title>
+    <script src="jquery-3.6.1.min.js"></script>
+    <title>The Misery</title>
   </head>
 
-  <body></body>
+  <body>
+    <h1>
+      Snake en <i><b>4K</b></i>
+    </h1>
+    <table id="game"></table>
+  </body>
 </html>
+
+<style>
+  body {
+    background-color: black;
+    color: white;
+    text-align: -webkit-center;
+  }
+
+  #game {
+    border-spacing: 0;
+    border: 1px solid white;
+  }
+
+  .pixel {
+    width: 12px;
+    height: 12px;
+    font-size: 11px;
+    text-align: center;
+  }
+</style>
+
+<script>
+  // Variables Globales
+  let dir = "ArrowRight";
+  let x;
+  let y;
+
+  // Funcion mimir
+  async function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  // Leer Teclas
+  $("body").keydown((e) => {
+    const key = e.key;
+    if (key == "ArrowUp" && dir != "ArrowDown") dir = key;
+
+    if (key == "ArrowDown" && dir != "ArrowUp") dir = key;
+
+    if (key == "ArrowRight" && dir != "ArrowLeft") dir = key;
+
+    if (key == "ArrowLeft" && dir != "ArrowRight") dir = key;
+  });
+
+  // Array de Mapas
+  const map = [
+    " xxxxxxxxxxxxxxxxxxxxxxxxx ",
+    "x                         x",
+    "x    ?????                x",
+    "x                         x",
+    "x           x             x",
+    "x           x             x",
+    "x           x             x",
+    "x           x             x",
+    "x           x             x",
+    "x                   x     x",
+    "x                   x     x",
+    "x                   x     x",
+    "x                   x     x",
+    "x                   x     x",
+    "x     xx xx               x",
+    "x                         x",
+    "x                         x",
+    " xxxxxxxxxxxxxxxxxxxxxxxxx ",
+  ];
+
+  // Renderizar Mapa
+  let startPoint = null;
+  let _y = 0;
+  map.forEach((value) => {
+    let txt = "<tr>";
+
+    for (let _x = 0; _x < value.length; _x++) {
+      let color = "black";
+      if (value[_x] == "x") color = "white";
+      if (value[_x] == "?") {
+        x = _x;
+        y = _y;
+      }
+
+      txt += "<td ";
+      txt += "id='" + _x + "-" + _y + "' ";
+      txt += "class='pixel' ";
+      txt += "style='background-color: " + color + ";' ";
+      txt += "></td>";
+    }
+
+    txt += "</tr>";
+    _y++;
+
+    $("#game").append(txt);
+  });
+
+  // App
+  async function game() {
+    let gameover = false;
+    let player = [];
+    let food;
+
+    // Inicializar Jugador
+    for (let k = 0; k < 5; k++) {
+      player[k] = { x: x - k, y: y };
+    }
+
+    // Loop / Juego en curso
+    while (!gameover) {
+      // Limpiar buffer
+      player.forEach((value) => {
+        const _x = value.x;
+        const _y = value.y;
+
+        $("#" + _x + "-" + _y).attr("style", "background-color: black");
+        $("#" + _x + "-" + _y).text(" ");
+      });
+
+      // Asignar direccion del jugador
+      switch (dir) {
+        case "ArrowUp": {
+          y--;
+          break;
+        }
+
+        case "ArrowDown": {
+          y++;
+          break;
+        }
+
+        case "ArrowRight": {
+          x++;
+          break;
+        }
+
+        case "ArrowLeft": {
+          x--;
+          break;
+        }
+
+        default:
+          break;
+      }
+
+      // Heredar posiciones de los padres / Asignar posicion actual
+      for (let k = player.length - 1; k > 0; k--) {
+        player[k].x = player[k - 1].x;
+        player[k].y = player[k - 1].y;
+      }
+
+      player[0].x = x;
+      player[0].y = y;
+
+      // Renderizar jugador
+      for (let k = player.length - 1; k >= 0; k--) {
+        const _x = player[k].x;
+        const _y = player[k].y;
+        let txt = "";
+
+        // Color del jugador
+        txt += "background-color: hsl(43, 89%, " + (38 - k) + "%);";
+
+        // Orientacion de ojitos.
+        if (dir == "ArrowRight" || dir == "ArrowLeft")
+          txt += "writing-mode: vertical-rl;";
+
+        $("#" + _x + "-" + _y).attr("style", txt);
+
+        if (k == 0) $("#" + _x + "-" + _y).text("• •");
+      }
+
+      // Check Gameover
+      for (let k = 1; k < player.length; k++) {
+        if (player[k].x === x && player[k].y === y) gameover = true;
+      }
+
+      if (map[y][x] == "x") gameover = true;
+
+      await sleep(200);
+    }
+  }
+
+  game();
+</script>
