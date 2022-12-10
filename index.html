@@ -14,6 +14,13 @@
     </h1>
     <table id="game"></table>
     <h2 id="score"></h2>
+      <div id="gameover">
+        <h1><strong>smh smh.</strong></h1>
+        <p>¿Quieres volver a perder?</p>
+        <button onclick="replay()">perder es mi pasion.</b></button>
+        <button onclick="showList()"><i><b>LET ME OOOOOUT</b></i></button>
+      </div>
+    </div>
   </body>
 </html>
 
@@ -23,9 +30,28 @@
     color: white;
     text-align: -webkit-center;
     font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    background-size: 150px;
   }
 
   #game {
+    border-spacing: 0;
+    border: 1px solid white;
+    font-family: "Times New Roman", Times, serif;
+  }
+
+  #gameover {
+    background-color: black;
+    border: 1px solid blue;
+    border-radius: 5px;
+    width: fit-content;
+    padding: 10px;
+    top: -280px;
+    z-index: 1;
+    position: relative;
+    display: none;
+  }
+
+  .mapThumb {
     border-spacing: 0;
     border: 1px solid white;
     font-family: "Times New Roman", Times, serif;
@@ -37,15 +63,77 @@
     font-size: 11px;
     text-align: center;
   }
+
+  .pixelThumb {
+    width: 6px;
+    height: 6px;
+    font-size: 5px;
+    text-align: center;
+  }
 </style>
 
 <script>
   // Variables Globales
-  let dirSet = false;
   let dir = "ArrowRight";
-  let score = -1;
+  let dirSet = false;
+  let actualMap;
+  let listState;
   let x;
   let y;
+
+  // Variables Gifs
+  let desintegrated;
+
+
+  // Lista de Mapas
+  const maps = [
+    [
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "x                         x",
+      "x    ?????                x",
+      "x                         x",
+      "x           x             x",
+      "x           x             x",
+      "x           x             x",
+      "x           x             x",
+      "x           x             x",
+      "x                   x     x",
+      "x                   x     x",
+      "x                   x     x",
+      "x                   x     x",
+      "x                   x     x",
+      "x     xx xx               x",
+      "x                         x",
+      "x                         x",
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    ],
+    [
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a       xxxxxxxxx  xxxxxxxxx       a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a              ?????               a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a       xxxxxxxxx  xxxxxxxxx       a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+      "a                                  a",
+    ],
+  ];
 
   // Funcion mimir
   async function sleep(ms) {
@@ -79,176 +167,235 @@
     }
   });
 
-  // Array de Mapas
-  const map = [
-    "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "x                         x",
-    "x    ?????                x",
-    "x                         x",
-    "x           x             x",
-    "x           x             x",
-    "x           x             x",
-    "x           x             x",
-    "x           x             x",
-    "x                   x     x",
-    "x                   x     x",
-    "x                   x     x",
-    "x                   x     x",
-    "x                   x     x",
-    "x     xx xx               x",
-    "x                         x",
-    "x                         x",
-    "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
-  ];
+  // Mostrar lista de mapas
+  function showList() {
+    listState = true;
+    $("#game").empty();
+    $("#gameBox").css("display", "none");
+    $("#gameover").css("display", "none");
 
-  // Renderizar Mapa
-  let startPoint = null;
-  let _y = 0;
-  map.forEach((value) => {
-    let txt = "<tr>";
+    $("#listBox").css("display", "block");
 
-    for (let _x = 0; _x < value.length; _x++) {
-      let color = "black";
-      if (value[_x] == "x") color = "white";
-      if (value[_x] == "?") {
-        x = _x;
-        y = _y;
+    let k = 0;
+    maps.forEach((value) => {
+      renderMap(k, "map" + k);
+      k++;
+    });
+  }
+
+  // Renderizar mapa, vaya.
+  function renderMap(mapNumber, canvas) {
+    // Seleccionar Mapa
+    const map = maps[mapNumber];
+
+    // Renderizar Mapa
+    let _y = 0;
+    map.forEach((value) => {
+      const drawMethod = canvas == "game" ? "pixel" : "pixelThumb";
+      let txt = "<tr>";
+
+      for (let _x = 0; _x < value.length; _x++) {
+        let color = "black";
+        if (value[_x] == "x") color = "white";
+        if (value[_x] == "?") {
+          x = _x;
+          y = _y;
+        }
+
+        txt += "<td ";
+        txt += canvas == "game" ? "id='" + _x + "-" + _y + "' " : "";
+        txt += "class='" + drawMethod + "' ";
+        txt += "style='background-color: " + color + ";' ";
+        txt += "></td>";
       }
 
-      txt += "<td ";
-      txt += "id='" + _x + "-" + _y + "' ";
-      txt += "class='pixel' ";
-      txt += "style='background-color: " + color + ";' ";
-      txt += "></td>";
+      txt += "</tr>";
+      _y++;
+
+      $("#" + canvas).append(txt);
+    });
+  }
+
+  // Jugar
+  function play(mapNumber) {
+    const map = maps[mapNumber];
+
+    // Limpiar lista de mapas.
+    $("#listBox").css("display", "none");
+    for (let k = 0; k < map.length; k++) {
+      $("#map" + k).empty();
     }
 
-    txt += "</tr>";
-    _y++;
+    // Inicializar variables y partida
+    actualMap = mapNumber;
+    listState = false;
+    dirSet = false;
+    dir = "ArrowRight";
 
-    $("#game").append(txt);
-  });
+    $("#gameBox").css("display", "block");
+    renderMap(mapNumber, "game");
+    game();
 
-  // App
-  async function game() {
-    let gameover = false;
-    let player = [];
-    let food = {};
+    // App
+    async function game() {
+      let gameover = false;
+      let player = [];
+      let score = -1;
+      let food = {};
 
-    // Inicializar Jugador & food
-    for (let k = 0; k < 4; k++) {
-      player[k] = { x: x - k, y: y };
-    }
+      // Inicializar Jugador & food
+      for (let k = 0; k < 4; k++) {
+        player[k] = { x: x - k, y: y };
+      }
 
-    food = { x: x + 1, y: y };
+      food = { x: x + 1, y: y };
+      // Loop / Juego en curso
+      while (!gameover && !listState) {
+        // Limpiar buffer
+        player.forEach((value) => {
+          const _x = value.x;
+          const _y = value.y;
 
-    // Loop / Juego en curso
-    while (!gameover) {
-      // Limpiar buffer
-      player.forEach((value) => {
-        const _x = value.x;
-        const _y = value.y;
+          $("#" + _x + "-" + _y).attr("style", "background-color: black");
+          $("#" + _x + "-" + _y).text(" ");
+        });
 
-        $("#" + _x + "-" + _y).attr("style", "background-color: black");
-        $("#" + _x + "-" + _y).text(" ");
-      });
+        // Asignar direccion del jugador
+        dirSet = false;
 
-      // Asignar direccion del jugador
-      dirSet = false;
+        switch (dir) {
+          case "ArrowUp": {
+            y--;
 
-      switch (dir) {
-        case "ArrowUp": {
-          y--;
-          break;
+            if (y < 0) y = map.length - 1;
+            break;
+          }
+
+          case "ArrowDown": {
+            y++;
+
+            if (y == map.length) y = 0;
+            break;
+          }
+
+          case "ArrowRight": {
+            x++;
+
+            if (x == map[0].length) x = 0;
+            break;
+          }
+
+          case "ArrowLeft": {
+            x--;
+
+            if (x < 0) x = map[0].length - 1;
+            break;
+          }
+
+          default:
+            break;
         }
 
-        case "ArrowDown": {
-          y++;
-          break;
+        // Heredar posiciones de los padres / Asignar posicion actual
+        if (x == food.x && y == food.y) {
+          player.push({ x: x - player.length - 1, y: y });
         }
 
-        case "ArrowRight": {
-          x++;
-          break;
+        for (let k = player.length - 1; k > 0; k--) {
+          player[k].x = player[k - 1].x;
+          player[k].y = player[k - 1].y;
         }
 
-        case "ArrowLeft": {
-          x--;
-          break;
+        player[0].x = x;
+        player[0].y = y;
+
+        // Posicion food + set Score
+        if (x == food.x && y == food.y) {
+          const xSize = map[0].length;
+          const ySize = map.length;
+          let oc = false;
+
+          // Comprobar que no esta spawneando donde no deberia.
+          while (!oc) {
+            oc = true;
+
+            food.x = Math.floor(Math.random() * xSize);
+            food.y = Math.floor(Math.random() * ySize);
+
+            player.forEach((value) => {
+              if (value.x == food.x && value.y == food.y) oc = false;
+            });
+
+            if (map[food.y][food.x] == "x") oc = false;
+          }
+
+          score++;
+          $("#score").text("Score: " + score);
         }
 
-        default:
-          break;
-      }
+        // Renderizar jugador & Food
+        for (let k = player.length - 1; k >= 0; k--) {
+          const _x = player[k].x;
+          const _y = player[k].y;
+          let txt = "";
 
-      // Heredar posiciones de los padres / Asignar posicion actual
-      if (x == food.x && y == food.y) {
-        player.push({ x: x - player.length - 1, y: y });
-      }
+          // Color del jugador
+          txt += "background-color: hsl(43, 89%, " + (38 - k) + "%);";
 
-      for (let k = player.length - 1; k > 0; k--) {
-        player[k].x = player[k - 1].x;
-        player[k].y = player[k - 1].y;
-      }
+          // Orientacion ojitos
+          if (dir == "ArrowRight" || dir == "ArrowLeft")
+            txt += "writing-mode: vertical-rl;";
 
-      player[0].x = x;
-      player[0].y = y;
+          // Render Player
+          $("#" + _x + "-" + _y).attr("style", txt);
+          if (k == 0) $("#" + _x + "-" + _y).text("• •");
 
-      // Posicion food + set Score
-      if (x == food.x && y == food.y) {
-        const xSize = map[0].length;
-        const ySize = map.length;
-        let oc = false;
-
-        // Comprobar que no esta spawneando donde no deberia.
-        while (!oc) {
-          oc = true;
-
-          food.x = Math.floor(Math.random() * xSize);
-          food.y = Math.floor(Math.random() * ySize);
-
-          player.forEach((value) => {
-            if (value.x == food.x && value.y == food.y) oc = false;
-          });
-
-          if (map[food.y][food.x] == "x") oc = false;
+          // Spawn food
+          $("#" + food.x + "-" + food.y).attr("style", "color: lightpink;");
+          $("#" + food.x + "-" + food.y).text("☻");
         }
 
-        score++;
-        $("#score").text("Score: " + score);
+        // Check Gameover
+        for (let k = 1; k < player.length; k++) {
+          if (player[k].x === x && player[k].y === y) gameover = true;
+        }
+
+        if (map[y][x] == "x") gameover = true;
+
+        await sleep(200 - score * 8);
       }
-
-      // Renderizar jugador & Food
-      for (let k = player.length - 1; k >= 0; k--) {
-        const _x = player[k].x;
-        const _y = player[k].y;
-        let txt = "";
-
-        // Color del jugador
-        txt += "background-color: hsl(43, 89%, " + (38 - k) + "%);";
-
-        // Orientacion ojitos
-        if (dir == "ArrowRight" || dir == "ArrowLeft")
-          txt += "writing-mode: vertical-rl;";
-
-        // Render Player
-        $("#" + _x + "-" + _y).attr("style", txt);
-        if (k == 0) $("#" + _x + "-" + _y).text("• •");
-
-        // Spawn food
-        $("#" + food.x + "-" + food.y).attr("style", "color: lightpink;");
-        $("#" + food.x + "-" + food.y).text("☻");
-      }
-
-      // Check Gameover
-      for (let k = 1; k < player.length; k++) {
-        if (player[k].x === x && player[k].y === y) gameover = true;
-      }
-
-      if (map[y][x] == "x") gameover = true;
-
-      await sleep(150 - score * 6);
+      
+      if (gameover) $("#gameover").css("display", "block");
     }
   }
 
-  game();
+  // Volver a jugar
+  function replay() {
+    $("#gameover").css("display", "none");
+    $("#game").empty();
+    play(actualMap);
+  }
+
+  // Preparar Gifs
+  /*
+  $(document).ready(() => {
+    const canvas = document.getElementById("canvasDummy");
+    const img = document.getElementById("desintegrated");
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, img.offsetWidth, img.offsetHeight);
+
+    desintegrated = canvas.toDataURL();
+    console.log(desintegrated);
+  });
+
+  // Background Changes
+  function bgGif(x) {
+    switch (x) {
+      case "gameover": {
+        $("body").css("background", "url("+ desintegrated +")");
+      }
+    }
+  }
+  */
+  showList();
 </script>
