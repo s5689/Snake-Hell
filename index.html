@@ -4,21 +4,60 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="jquery-3.6.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <title>The Misery</title>
   </head>
 
+  <h3 id="gifState" style="float: right; position: absolute"></h3>
+
+  <div id="desintegrated" class="gif" duration="1600"></div>
+  <div id="rock_sus" class="gif" duration="1200"></div>
+  <div id="speedrun" class="gif" duration="4200"></div>
+  <div id="toad" class="gif" duration="2400"></div>
+  <div id="flowercat" class="gif" duration="2900"></div>
+  <div id="hardparty" class="gif" duration="3200"></div>
+  <div id="hehehe" class="gif" duration="1800"></div>
+
   <body>
     <h1>
-      Snake en <i><b>4K</b></i>
+      Snake en <i><b>8K</b></i>
     </h1>
-    <table id="game"></table>
-    <h2 id="score"></h2>
+    <div id="listBox">
+      <h3>Lista de Niveles</h3>
+
+      <label for="#map0">Uvstucalo</label>
+      <button onclick="play(0)">Let's go</button>
+      <table id="map0" class="mapThumb"></table>
+
+      <br />
+      <br />
+      <br />
+
+      <label for="#map1">Frifaya</label>
+      <button onclick="play(1)">Let's go</button>
+      <table id="map1" class="mapThumb"></table>
+
+      <br />
+      <br />
+      <br />
+
+      <label for="#map2">Zz<small>z</small></label>
+      <button onclick="play(2)">Let's go</button>
+      <table id="map2" class="mapThumb"></table>
+    </div>
+
+    <div id="gameBox" style="position: relative">
+      <button onclick="showList()">Volver <b>a Brazil</b></button>
+      <table id="game"></table>
+      <h2 id="score"></h2>
+
       <div id="gameover">
         <h1><strong>smh smh.</strong></h1>
         <p>¿Quieres volver a perder?</p>
-        <button onclick="replay()">perder es mi pasion.</b></button>
-        <button onclick="showList()"><i><b>LET ME OOOOOUT</b></i></button>
+        <button onclick="replay()">perder es mi pasion.</button>
+        <button onclick="showList()">
+          <i><b>LET ME OOOOOUT</b></i>
+        </button>
       </div>
     </div>
   </body>
@@ -30,7 +69,16 @@
     color: white;
     text-align: -webkit-center;
     font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-    background-size: 150px;
+  }
+
+  .gif {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    background-size: 300px !important;
   }
 
   #game {
@@ -75,15 +123,43 @@
 <script>
   // Variables Globales
   let dir = "ArrowRight";
+  let score = -1;
   let dirSet = false;
   let actualMap;
   let listState;
   let x;
   let y;
 
-  // Variables Gifs
-  let desintegrated;
-
+  const gifs = [
+    {
+      name: "desintegrated",
+      url: "https://media.tenor.com/-wrmUJrUbeoAAAAd/emoji-disintergrating.gif",
+    },
+    {
+      name: "rock_sus",
+      url: "https://media.tenor.com/GBdIH5sL4XQAAAAC/the-rock-rock.gif",
+    },
+    {
+      name: "speedrun",
+      url: "https://media.tenor.com/0CXQArozOAEAAAAC/sweaty-speedruner.gif",
+    },
+    {
+      name: "toad",
+      url: "https://media.tenor.com/Pq2YmXIRgngAAAAC/scream-toad.gif",
+    },
+    {
+      name: "flowercat",
+      url: "https://media.tenor.com/BmGGGbZgE3IAAAAd/omg-wtf.gif",
+    },
+    {
+      name: "hardparty",
+      url: "https://media.tenor.com/ZX6CkKBPfjMAAAAC/party-hard.gif",
+    },
+    {
+      name: "hehehe",
+      url: "https://media.tenor.com/7SI7s743NmoAAAAS/evil-evil-laugh.gif",
+    },
+  ];
 
   // Lista de Mapas
   const maps = [
@@ -132,6 +208,23 @@
       "a                                  a",
       "a                                  a",
       "a                                  a",
+    ],
+    [
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a        ?????        a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
+      "a                     a",
     ],
   ];
 
@@ -240,8 +333,8 @@
     async function game() {
       let gameover = false;
       let player = [];
-      let score = -1;
       let food = {};
+      score = -1;
 
       // Inicializar Jugador & food
       for (let k = 0; k < 4; k++) {
@@ -330,6 +423,7 @@
           }
 
           score++;
+          gifScore();
           $("#score").text("Score: " + score);
         }
 
@@ -351,7 +445,10 @@
           if (k == 0) $("#" + _x + "-" + _y).text("• •");
 
           // Spawn food
-          $("#" + food.x + "-" + food.y).attr("style", "color: lightpink;");
+          $("#" + food.x + "-" + food.y).attr(
+            "style",
+            "color: lightpink; background-color: black;"
+          );
           $("#" + food.x + "-" + food.y).text("☻");
         }
 
@@ -362,10 +459,18 @@
 
         if (map[y][x] == "x") gameover = true;
 
-        await sleep(200 - score * 8);
+        // Game Speed
+        if (score < 5) await sleep(75 - score * 4);
+        if (score >= 5 && score < 15) await sleep(65 - score * 2);
+        if (score >= 15 && score < 25) await sleep(50 - score * 1);
+        if (score >= 25) await sleep(25);
       }
-      
-      if (gameover) $("#gameover").css("display", "block");
+
+      // Acciones si es gameover
+      if (gameover) {
+        $("#gameover").css("display", "block");
+        bgGif("desintegrated");
+      }
     }
   }
 
@@ -377,25 +482,85 @@
   }
 
   // Preparar Gifs
-  /*
-  $(document).ready(() => {
-    const canvas = document.getElementById("canvasDummy");
-    const img = document.getElementById("desintegrated");
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, img.offsetWidth, img.offsetHeight);
+  function loadGifs() {
+    let gifState = 0;
 
-    desintegrated = canvas.toDataURL();
-    console.log(desintegrated);
-  });
+    gifs.forEach((value) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.onload = () => {
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+          const url = reader.result;
+          gifState++;
+          $("#gifState").text(gifState + "/" + gifs.length);
+          $("#" + value.name).attr(
+            "style",
+            "background: url(" + url.replace(/(\r\n|\n|\r)/gm, "") + ");"
+          );
+
+          $("#" + value.name).css("opacity", "0");
+        };
+
+        reader.readAsDataURL(xhr.response);
+      };
+
+      xhr.open("GET", value.url);
+      xhr.responseType = "blob";
+      xhr.send();
+    });
+  }
 
   // Background Changes
-  function bgGif(x) {
-    switch (x) {
-      case "gameover": {
-        $("body").css("background", "url("+ desintegrated +")");
+  function bgGif(gifName) {
+    const duration = $("#" + gifName).attr("duration");
+    $("#" + gifName).css("opacity", "1");
+
+    // Regresar el background a la normalidad
+    setTimeout(() => {
+      $("#" + gifName).css("opacity", "0");
+    }, duration);
+  }
+
+  // Gifs segun la puntuacion
+  function gifScore() {
+    switch (score) {
+      case 5: {
+        bgGif("rock_sus");
+        break;
       }
+
+      case 15: {
+        bgGif("speedrun");
+        break;
+      }
+
+      case 22: {
+        bgGif("toad");
+        break;
+      }
+
+      case 28: {
+        bgGif("flowercat");
+        break;
+      }
+
+      case 32: {
+        bgGif("hardparty");
+        break;
+      }
+
+      case 38: {
+        bgGif("hehehe");
+        break;
+      }
+
+      default:
+        break;
     }
   }
-  */
+
+  loadGifs();
   showList();
 </script>
