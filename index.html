@@ -24,11 +24,8 @@
     tienes internet decente?
   </button>
 
-  <div id="desintegrated" class="gif" duration="1600"></div>
-  <div id="penguin_explode" class="gif" duration="1070"></div>
-  <div id="house_explode" class="gif" duration="1750"></div>
-  <div id="claps" class="gif" duration="1400"></div>
-  <div id="meh" class="gif" duration="2700"></div>
+  <div id="brocoli" class="gif" duration="1350"></div>
+
   <div id="rock_sus" class="gif" duration="1150"></div>
   <div id="speedrun" class="gif" duration="4200"></div>
   <div id="toad" class="gif" duration="2400"></div>
@@ -36,10 +33,20 @@
   <div id="hardparty" class="gif" duration="3100"></div>
   <div id="hehehe" class="gif" duration="2400"></div>
 
+  <div id="bru" class="gif" duration="2500"></div>
+  <div id="bye" class="gif" duration="1300"></div>
+
+  <div id="desintegrated" class="gif" duration="1600"></div>
+  <div id="penguin_explode" class="gif" duration="1070"></div>
+  <div id="house_explode" class="gif" duration="1750"></div>
+  <div id="claps" class="gif" duration="1400"></div>
+  <div id="meh" class="gif" duration="2700"></div>
+
   <body>
     <h1>
       Snake en <i><b>8K</b></i>
     </h1>
+
     <div id="listBox">
       <h3>Lista de Niveles</h3>
 
@@ -52,7 +59,7 @@
       <br />
 
       <label for="#map1">Frifaya</label>
-      <button onclick="play(1)">esta cool</button>
+      <button onclick="play(1)">esta fun</button>
       <table id="map1" class="mapThumb"></table>
 
       <br />
@@ -62,6 +69,34 @@
       <label for="#map2">Zz<small>z</small></label>
       <button onclick="play(2)">meh</button>
       <table id="map2" class="mapThumb"></table>
+
+      <br />
+      <br />
+      <br />
+
+      <label for="#map3">Arte abstracto.</label>
+      <button onclick="play(3)">esta chevere</button>
+      <table id="map3" class="mapThumb"></table>
+
+      <br />
+      <br />
+      <br />
+
+      <label for="#map4">Mr. McDonalds</label>
+      <button onclick="play(4)"><small>no te muerdas la cola.</small></button>
+      <table id="map4" class="mapThumb"></table>
+
+      <br />
+      <br />
+      <br />
+
+      <label for="#map5"
+        ><small
+          ><sub><i>el wiwi's adventure</i></sub></small
+        ></label
+      >
+      <button onclick="play(5)"><strong>epic</strong></button>
+      <table id="map5" class="mapThumb"></table>
     </div>
 
     <div id="gameBox" style="position: relative">
@@ -70,12 +105,10 @@
       <h2 id="score"></h2>
 
       <div id="gameover">
-        <h1><strong>smh smh.</strong></h1>
-        <p>¿Quieres volver a perder?</p>
-        <button onclick="replay()">perder es mi pasion.</button>
-        <button onclick="showList()">
-          <i><b>LET ME OOOOOUT</b></i>
-        </button>
+        <h1 id="GOtxt0"></h1>
+        <p id="GOtxt1"></p>
+        <button id="GOtxt2" onclick="replay()"></button>
+        <button id="GOtxt3" onclick="showList()"></button>
       </div>
     </div>
   </body>
@@ -152,6 +185,7 @@
   let listState;
 
   const gifs = [
+    // Gameovers
     {
       name: "desintegrated",
       url: "https://media.tenor.com/-wrmUJrUbeoAAAAd/emoji-disintergrating.gif",
@@ -172,6 +206,15 @@
       name: "meh",
       url: "https://media.tenor.com/DgPnCr2BbOcAAAAd/not-good-not-bad-not-good.gif",
     },
+    {
+      name: "bru",
+      url: "https://media.tenor.com/vAJ22jD0ol0AAAAd/gloria-pokemon.gif",
+    },
+    {
+      name: "bye",
+      url: "https://media.tenor.com/z0X6U7McZPcAAAAd/bye-im-out.gif",
+    },
+    // Scores
     {
       name: "rock_sus",
       url: "https://media.tenor.com/GBdIH5sL4XQAAAAC/the-rock-rock.gif",
@@ -196,6 +239,11 @@
       name: "hehehe",
       url: "https://media.tenor.com/7SI7s743NmoAAAAS/evil-evil-laugh.gif",
     },
+    // Misc
+    {
+      name: "brocoli",
+      url: "https://media.tenor.com/d6cdu2C8CNwAAAAC/brocoli-healty.gif",
+    },
   ];
 
   // Lista de Mapas
@@ -203,7 +251,7 @@
     [
       "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
       "x                         x",
-      "x     ????                x",
+      "x     ?????               x",
       "x                         x",
       "x           x             x",
       "x           x             x",
@@ -233,7 +281,7 @@
       "a                                  a",
       "a                                  a",
       "a                                  a",
-      "a               ????               a",
+      "a              ?????               a",
       "a                                  a",
       "a                                  a",
       "a                                  a",
@@ -254,7 +302,7 @@
       "a                     a",
       "a                     a",
       "a                     a",
-      "a         ????        a",
+      "a        ?????        a",
       "a                     a",
       "a                     a",
       "a                     a",
@@ -262,6 +310,97 @@
       "a                     a",
       "a                     a",
       "a                     a",
+    ],
+    [
+      "a                x x               a",
+      "a                x x               a",
+      "a                x x               a",
+      "a            xxxx   xxxx           a",
+      "a                                  a",
+      "a            xxxx   xxxx           a",
+      "a                x x               a",
+      "a                x x               a",
+      "a                x x               a",
+      "a                                  a",
+      "a                                  a",
+      "a                        xxxxxxxxxxx",
+      "a?????                   x         a",
+      "a                        x         a",
+      "a                        x         a",
+      "a    xxxxxx  xxxxx xxxxxxxxxxxxxx  a",
+      "a    x    x      x x               a",
+      "a    x    x      x x               a",
+      "a    x    x      x x               a",
+      "a    x    x      x x               a",
+      "a    x    x      x x               a",
+      "a    x    x      x x               a",
+      "a    x    x      x x               a",
+      "a    x    x      x x               a",
+    ],
+    [
+      "a                              a",
+      "a x                          x a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a   ???????????????????????    a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a               x              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a                              a",
+      "a x                          x a",
+    ],
+    [
+      "x   xxxxxxxxxxxxxxxxxx   xxxxxxxxxxxxxxxxx   x",
+      "x                    x   x                   x",
+      "x                                            x",
+      "x                                            x",
+      "x                                            x",
+      "x                    x   x                   x",
+      "xxxxxxxxxx   xxxxxxxxx   xxxxxxxxxx   xxxxxxxx",
+      "x                                            x",
+      "x                                            x",
+      "x                                            x",
+      "xxxxxxxxxx   xxxxxxxxx   xxxxxxxxxx   xxxxxxxx",
+      "x                    x   x                   x",
+      "                     x   x                    ",
+      "                     x   x                    ",
+      "                     x   x                    ",
+      "x                    x   x                   x",
+      "xxxxxxxxxx   xxxxxxxxx   xxxxxxxxxx   xxxxxxxx",
+      "                                              ",
+      "                       ?                      ",
+      "                                              ",
+      "xxxxxxxxxx   xxxxxxxxx   xxxxxxxxxx   xxxxxxxx",
+      "x                    x   x                   x",
+      "                     x   x                    ",
+      "                     x   x                    ",
+      "                     x   x                    ",
+      "x                    x   x                   x",
+      "xxxxxxxxxx   xxxxxxxxx   xxxxxxxxxx   xxxxxxxx",
+      "x                                            x",
+      "x                                            x",
+      "x                                            x",
+      "xxxxxxxxxx   xxxxxxxxx   xxxxxxxxxx   xxxxxxxx",
+      "x                    x   x                   x",
+      "x                                            x",
+      "x                                            x",
+      "x                                            x",
+      "x                    x   x                   x",
+      "x   xxxxxxxxxxxxxxxxxx   xxxxxxxxxxxxxxxxx   x",
     ],
   ];
 
@@ -361,6 +500,7 @@
     dir = "ArrowRight";
 
     $("#gameBox").css("display", "block");
+    $("#score").text("Score: " + 0);
     renderMap(mapNumber, "game");
     game();
 
@@ -369,16 +509,18 @@
       let gameover = false;
       let player = [];
       let food = {};
+      let dietFood = { x: -999, y: -999 };
       let x = initPoint[0].x;
       let y = initPoint[0].y;
-      score = -1;
+      score = 0;
 
-      // Inicializar Jugador & food
+      // Inicializar Jugador & foods
       for (let k = 0; k < initPoint.length; k++) {
         player[k] = initPoint[k];
       }
 
-      food = { x: x + 1, y: y };
+      setFood();
+      setDietFood();
 
       // Loop / Juego en curso
       while (!gameover && !listState) {
@@ -442,30 +584,28 @@
 
         // Posicion food + set Score
         if (x == food.x && y == food.y) {
-          const xSize = map[0].length;
-          const ySize = map.length;
-          let oc = false;
-
-          // Comprobar que no esta spawneando donde no deberia.
-          while (!oc) {
-            oc = true;
-
-            food.x = Math.floor(Math.random() * xSize);
-            food.y = Math.floor(Math.random() * ySize);
-
-            player.forEach((value) => {
-              if (value.x == food.x && value.y == food.y) oc = false;
-            });
-
-            if (map[food.y][food.x] == "x") oc = false;
-          }
+          setFood();
 
           score++;
           gifScore();
           $("#score").text("Score: " + score);
         }
 
-        // Renderizar jugador & Food
+        // Posicion dietFood + remover tamaño
+        if (x == dietFood.x && y == dietFood.y) {
+          setDietFood();
+
+          const diet = Math.floor(Math.random() * 20) + 1;
+
+          for (let k = 0; k < diet; k++) {
+            player.pop();
+          }
+
+          if (player.length == 0) gameover = true;
+          else bgGif("brocoli");
+        }
+
+        // Renderizar jugador & Foods
         for (let k = player.length - 1; k >= 0; k--) {
           const _x = player[k].x;
           const _y = player[k].y;
@@ -488,6 +628,13 @@
             "color: lightpink; background-color: black;"
           );
           $("#" + food.x + "-" + food.y).text("☻");
+
+          // Spawn dietFood
+          $("#" + dietFood.x + "-" + dietFood.y).attr(
+            "style",
+            "color: lightgreen; background-color: black;"
+          );
+          $("#" + dietFood.x + "-" + dietFood.y).text("♣");
         }
 
         // Check Gameover
@@ -504,40 +651,121 @@
         if (score >= 25) await sleep(25);
       }
 
-      // Acciones si es gameover
+      // Acciones si hay gameover
       if (gameover) {
-        $("#gameover").css("display", "block");
+        let txt0;
+        let txt1;
+        let txt2;
+        let txt3;
 
-        // Seleccion de gif aleatorio
-        if (score < 22) {
-          switch (Math.floor(Math.random() * 3)) {
-            case 0: {
-              bgGif("desintegrated");
-              break;
+        if (player.length != 0) {
+          // Asignacion de texto
+          txt0 = "<strong>smh smh.</strong>";
+          txt1 = "¿Quieres volver a perder?";
+          txt2 = "perder es mi pasion.";
+          txt3 = "<i><b>LET ME OOOOOUT</b></i>";
+
+          // Seleccion de gif aleatorio
+          if (score < 22) {
+            switch (Math.floor(Math.random() * 3)) {
+              case 0: {
+                bgGif("desintegrated");
+                break;
+              }
+
+              case 1: {
+                bgGif("penguin_explode");
+                break;
+              }
+
+              case 2: {
+                bgGif("house_explode");
+                break;
+              }
             }
+          } else {
+            switch (Math.floor(Math.random() * 2)) {
+              case 0: {
+                bgGif("claps");
+                break;
+              }
 
-            case 1: {
-              bgGif("penguin_explode");
-              break;
-            }
-
-            case 2: {
-              bgGif("house_explode");
-              break;
+              case 1: {
+                bgGif("meh");
+                break;
+              }
             }
           }
         } else {
+          // Asignacion de texto
+          txt0 = "<small><i>a</i></small>";
+          txt1 = "Hacer dieta no siempre es bueno.";
+          txt2 = "todo calculado.";
+          txt3 = "<small>no entendi</small>";
+
           switch (Math.floor(Math.random() * 2)) {
             case 0: {
-              bgGif("claps");
+              bgGif("bru");
               break;
             }
 
             case 1: {
-              bgGif("meh");
+              bgGif("bye");
               break;
             }
           }
+        }
+
+        $("#gameover").css("display", "block");
+        $("#GOtxt0").html(txt0);
+        $("#GOtxt1").html(txt1);
+        $("#GOtxt2").html(txt2);
+        $("#GOtxt3").html(txt3);
+      }
+
+      // Posicion food.
+      function setFood() {
+        const xSize = map[0].length;
+        const ySize = map.length;
+        let oc = false;
+
+        // Comprobar que no esta spawneando donde no deberia.
+        while (!oc) {
+          oc = true;
+
+          food.x = Math.floor(Math.random() * xSize);
+          food.y = Math.floor(Math.random() * ySize);
+
+          player.forEach((value) => {
+            if (value.x == food.x && value.y == food.y) oc = false;
+          });
+
+          if (food.x == dietFood.x && food.y == dietFood.y) oc = false;
+
+          if (map[food.y][food.x] == "x") oc = false;
+        }
+      }
+
+      // Posicion dietFood.
+      function setDietFood() {
+        const xSize = map[0].length;
+        const ySize = map.length;
+        let oc = false;
+
+        // Comprobar que no esta spawneando donde no deberia.
+        while (!oc) {
+          oc = true;
+
+          dietFood.x = Math.floor(Math.random() * xSize);
+          dietFood.y = Math.floor(Math.random() * ySize);
+
+          player.forEach((value) => {
+            if (value.x == dietFood.x && value.y == dietFood.y) oc = false;
+          });
+
+          if (food.x == dietFood.x && food.y == dietFood.y) oc = false;
+
+          if (map[dietFood.y][dietFood.x] == "x") oc = false;
         }
       }
     }
