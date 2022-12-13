@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <title>The Misery</title>
+    <title>Snake</title>
   </head>
 
   <h3 id="gifState" style="float: right; position: absolute"></h3>
@@ -14,14 +14,14 @@
     style="position: absolute; top: 70px; left: 0"
     onclick="javascript: window.location.replace('index.html?cantv')"
   >
-    usas CANTV?
+    Version Ligera
   </button>
   <button
     id="cantv"
     style="position: absolute; top: 70px; left: 0; display: none"
     onclick="javascript: window.location.replace('index.html')"
   >
-    tienes internet decente?
+    Version Completa
   </button>
 
   <div id="brocoli" class="gif" duration="1350"></div>
@@ -43,23 +43,21 @@
   <div id="meh" class="gif" duration="2700"></div>
 
   <body>
-    <h1>
-      Snake en <i><b>8K</b></i>
-    </h1>
+    <h1><i>The Snake</i></h1>
 
     <div id="listBox">
       <h3>Lista de Niveles</h3>
 
-      <label for="#map0">Uvstucalo</label>
-      <button onclick="play(0)">primer comentario</button>
+      <label for="#map0">Obstaculos</label>
+      <button onclick="play(0)">Mi primer mapa</button>
       <table id="map0" class="mapThumb"></table>
 
       <br />
       <br />
       <br />
 
-      <label for="#map1">Frifaya</label>
-      <button onclick="play(1)">esta fun</button>
+      <label for="#map1">Freedom</label>
+      <button onclick="play(1)">Es entretenido</button>
       <table id="map1" class="mapThumb"></table>
 
       <br />
@@ -67,7 +65,7 @@
       <br />
 
       <label for="#map2">Zz<small>z</small></label>
-      <button onclick="play(2)">meh</button>
+      <button onclick="play(2)">Un poco simple</button>
       <table id="map2" class="mapThumb"></table>
 
       <br />
@@ -75,7 +73,7 @@
       <br />
 
       <label for="#map3">Arte abstracto.</label>
-      <button onclick="play(3)">esta chevere</button>
+      <button onclick="play(3)">Es bonito</button>
       <table id="map3" class="mapThumb"></table>
 
       <br />
@@ -83,7 +81,7 @@
       <br />
 
       <label for="#map4">Mr. McDonalds</label>
-      <button onclick="play(4)"><small>no te muerdas la cola.</small></button>
+      <button onclick="play(4)"><small>No te muerdas la cola.</small></button>
       <table id="map4" class="mapThumb"></table>
 
       <br />
@@ -92,15 +90,15 @@
 
       <label for="#map5"
         ><small
-          ><sub><i>el wiwi's adventure</i></sub></small
+          ><sub><i>pequeñas grandes aventuras</i></sub></small
         ></label
       >
-      <button onclick="play(5)"><strong>epic</strong></button>
+      <button onclick="play(5)"><strong>Buena suerte</strong></button>
       <table id="map5" class="mapThumb"></table>
     </div>
 
     <div id="gameBox" style="position: relative">
-      <button onclick="showList()">Volver <del>a Brazil</del></button>
+      <button onclick="showList()">Volver a la Lista</button>
       <table id="game"></table>
       <h2 id="score"></h2>
 
@@ -185,7 +183,7 @@
   let listState;
 
   const gifs = [
-    //Gameovers
+    // Gameovers
     {
       name: "desintegrated",
       url: "https://media.tenor.com/-wrmUJrUbeoAAAAd/emoji-disintergrating.gif",
@@ -660,10 +658,10 @@
 
         if (player.length != 0) {
           // Asignacion de texto
-          txt0 = "<strong>smh smh.</strong>";
-          txt1 = "¿Quieres volver a perder?";
-          txt2 = "perder es mi pasion.";
-          txt3 = "<i><b>LET ME OOOOOUT</b></i>";
+          txt0 = "<strong>Gameover</strong>";
+          txt1 = "¿Quieres volver a intentarlo?";
+          txt2 = "Esta bien";
+          txt3 = "Creo que no";
 
           // Seleccion de gif aleatorio
           if (score < 22) {
@@ -698,10 +696,10 @@
           }
         } else {
           // Asignacion de texto
-          txt0 = "<small><i>a</i></small>";
+          txt0 = "<small><i>hmmm..</i></small>";
           txt1 = "Hacer dieta no siempre es bueno.";
-          txt2 = "todo calculado.";
-          txt3 = "<small>no entendi</small>";
+          txt2 = "Vale.";
+          txt3 = "<small>No entendi</small>";
 
           switch (Math.floor(Math.random() * 2)) {
             case 0: {
@@ -809,7 +807,7 @@
         xhr.send();
       });
     } else {
-      $("#gifState").html("<i>CANTV user detected.</i>");
+      $("#gifState").html("<i>Version Lite</i>");
       $("#noCantv").css("display", "none");
       $("#cantv").css("display", "block");
     }
