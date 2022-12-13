@@ -9,14 +9,32 @@
   </head>
 
   <h3 id="gifState" style="float: right; position: absolute"></h3>
+  <button
+    id="noCantv"
+    style="position: absolute; top: 70px; left: 0"
+    onclick="javascript: window.location.replace('index.html?cantv')"
+  >
+    usas CANTV?
+  </button>
+  <button
+    id="cantv"
+    style="position: absolute; top: 70px; left: 0; display: none"
+    onclick="javascript: window.location.replace('index.html')"
+  >
+    tienes internet decente?
+  </button>
 
   <div id="desintegrated" class="gif" duration="1600"></div>
-  <div id="rock_sus" class="gif" duration="1200"></div>
+  <div id="penguin_explode" class="gif" duration="1070"></div>
+  <div id="house_explode" class="gif" duration="1750"></div>
+  <div id="claps" class="gif" duration="1400"></div>
+  <div id="meh" class="gif" duration="2700"></div>
+  <div id="rock_sus" class="gif" duration="1150"></div>
   <div id="speedrun" class="gif" duration="4200"></div>
   <div id="toad" class="gif" duration="2400"></div>
   <div id="flowercat" class="gif" duration="2900"></div>
-  <div id="hardparty" class="gif" duration="3200"></div>
-  <div id="hehehe" class="gif" duration="1800"></div>
+  <div id="hardparty" class="gif" duration="3100"></div>
+  <div id="hehehe" class="gif" duration="2400"></div>
 
   <body>
     <h1>
@@ -26,7 +44,7 @@
       <h3>Lista de Niveles</h3>
 
       <label for="#map0">Uvstucalo</label>
-      <button onclick="play(0)">Let's go</button>
+      <button onclick="play(0)">primer comentario</button>
       <table id="map0" class="mapThumb"></table>
 
       <br />
@@ -34,7 +52,7 @@
       <br />
 
       <label for="#map1">Frifaya</label>
-      <button onclick="play(1)">Let's go</button>
+      <button onclick="play(1)">esta cool</button>
       <table id="map1" class="mapThumb"></table>
 
       <br />
@@ -42,12 +60,12 @@
       <br />
 
       <label for="#map2">Zz<small>z</small></label>
-      <button onclick="play(2)">Let's go</button>
+      <button onclick="play(2)">meh</button>
       <table id="map2" class="mapThumb"></table>
     </div>
 
     <div id="gameBox" style="position: relative">
-      <button onclick="showList()">Volver <b>a Brazil</b></button>
+      <button onclick="showList()">Volver <del>a Brazil</del></button>
       <table id="game"></table>
       <h2 id="score"></h2>
 
@@ -121,19 +139,38 @@
 </style>
 
 <script>
+  // Cantv?
+  const searchParams = new URLSearchParams(window.location.search);
+  const cantvUser = searchParams.has("cantv");
+
   // Variables Globales
   let dir = "ArrowRight";
   let score = -1;
   let dirSet = false;
+  let initPoint = [];
   let actualMap;
   let listState;
-  let x;
-  let y;
 
   const gifs = [
     {
       name: "desintegrated",
       url: "https://media.tenor.com/-wrmUJrUbeoAAAAd/emoji-disintergrating.gif",
+    },
+    {
+      name: "penguin_explode",
+      url: "https://media.tenor.com/0RwDYUpgH8kAAAAC/pingu-penguin.gif",
+    },
+    {
+      name: "house_explode",
+      url: "https://media.tenor.com/eEs1jRy5UXgAAAAC/house-explosion.gif",
+    },
+    {
+      name: "claps",
+      url: "https://media.tenor.com/jrIAsC6362EAAAAC/clap-clapping.gif",
+    },
+    {
+      name: "meh",
+      url: "https://media.tenor.com/DgPnCr2BbOcAAAAd/not-good-not-bad-not-good.gif",
     },
     {
       name: "rock_sus",
@@ -166,7 +203,7 @@
     [
       "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
       "x                         x",
-      "x    ?????                x",
+      "x     ????                x",
       "x                         x",
       "x           x             x",
       "x           x             x",
@@ -196,7 +233,7 @@
       "a                                  a",
       "a                                  a",
       "a                                  a",
-      "a              ?????               a",
+      "a               ????               a",
       "a                                  a",
       "a                                  a",
       "a                                  a",
@@ -217,7 +254,7 @@
       "a                     a",
       "a                     a",
       "a                     a",
-      "a        ?????        a",
+      "a         ????        a",
       "a                     a",
       "a                     a",
       "a                     a",
@@ -278,10 +315,11 @@
 
   // Renderizar mapa, vaya.
   function renderMap(mapNumber, canvas) {
-    // Seleccionar Mapa
+    // Seleccionar Mapa & Limpiar posicion inicial del jugador
     const map = maps[mapNumber];
+    initPoint = [];
 
-    // Renderizar Mapa
+    // Renderizar Mapa, si.
     let _y = 0;
     map.forEach((value) => {
       const drawMethod = canvas == "game" ? "pixel" : "pixelThumb";
@@ -290,10 +328,7 @@
       for (let _x = 0; _x < value.length; _x++) {
         let color = "black";
         if (value[_x] == "x") color = "white";
-        if (value[_x] == "?") {
-          x = _x;
-          y = _y;
-        }
+        if (value[_x] == "?") initPoint.unshift({ x: _x, y: _y });
 
         txt += "<td ";
         txt += canvas == "game" ? "id='" + _x + "-" + _y + "' " : "";
@@ -329,19 +364,22 @@
     renderMap(mapNumber, "game");
     game();
 
-    // App
+    // Snake App
     async function game() {
       let gameover = false;
       let player = [];
       let food = {};
+      let x = initPoint[0].x;
+      let y = initPoint[0].y;
       score = -1;
 
       // Inicializar Jugador & food
-      for (let k = 0; k < 4; k++) {
-        player[k] = { x: x - k, y: y };
+      for (let k = 0; k < initPoint.length; k++) {
+        player[k] = initPoint[k];
       }
 
       food = { x: x + 1, y: y };
+
       // Loop / Juego en curso
       while (!gameover && !listState) {
         // Limpiar buffer
@@ -469,7 +507,38 @@
       // Acciones si es gameover
       if (gameover) {
         $("#gameover").css("display", "block");
-        bgGif("desintegrated");
+
+        // Seleccion de gif aleatorio
+        if (score < 22) {
+          switch (Math.floor(Math.random() * 3)) {
+            case 0: {
+              bgGif("desintegrated");
+              break;
+            }
+
+            case 1: {
+              bgGif("penguin_explode");
+              break;
+            }
+
+            case 2: {
+              bgGif("house_explode");
+              break;
+            }
+          }
+        } else {
+          switch (Math.floor(Math.random() * 2)) {
+            case 0: {
+              bgGif("claps");
+              break;
+            }
+
+            case 1: {
+              bgGif("meh");
+              break;
+            }
+          }
+        }
       }
     }
   }
@@ -481,35 +550,41 @@
     play(actualMap);
   }
 
-  // Preparar Gifs
+  // Preparar Gifs si no se usa cantv.
   function loadGifs() {
     let gifState = 0;
 
-    gifs.forEach((value) => {
-      const xhr = new XMLHttpRequest();
+    if (!cantvUser) {
+      gifs.forEach((value) => {
+        const xhr = new XMLHttpRequest();
 
-      xhr.onload = () => {
-        const reader = new FileReader();
+        xhr.onload = () => {
+          const reader = new FileReader();
 
-        reader.onloadend = () => {
-          const url = reader.result;
-          gifState++;
-          $("#gifState").text(gifState + "/" + gifs.length);
-          $("#" + value.name).attr(
-            "style",
-            "background: url(" + url.replace(/(\r\n|\n|\r)/gm, "") + ");"
-          );
+          reader.onloadend = () => {
+            const url = reader.result;
+            gifState++;
+            $("#gifState").text(gifState + "/" + gifs.length);
+            $("#" + value.name).attr(
+              "style",
+              "background: url(" + url.replace(/(\r\n|\n|\r)/gm, "") + ");"
+            );
 
-          $("#" + value.name).css("opacity", "0");
+            $("#" + value.name).css("opacity", "0");
+          };
+
+          reader.readAsDataURL(xhr.response);
         };
 
-        reader.readAsDataURL(xhr.response);
-      };
-
-      xhr.open("GET", value.url);
-      xhr.responseType = "blob";
-      xhr.send();
-    });
+        xhr.open("GET", value.url);
+        xhr.responseType = "blob";
+        xhr.send();
+      });
+    } else {
+      $("#gifState").html("<i>CANTV user detected.</i>");
+      $("#noCantv").css("display", "none");
+      $("#cantv").css("display", "block");
+    }
   }
 
   // Background Changes
