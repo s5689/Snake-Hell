@@ -567,7 +567,7 @@
             break;
         }
 
-        // Heredar posiciones de los padres / Asignar posicion actual
+        // Heredar posiciones de los padres
         if (x == food.x && y == food.y) {
           player.push({ x: x - player.length - 1, y: y });
         }
@@ -577,8 +577,13 @@
           player[k].y = player[k - 1].y;
         }
 
-        player[0].x = x;
-        player[0].y = y;
+        // Asignar posicion actual. Si no es posible: Gameover.
+        try {
+          player[0].x = x;
+          player[0].y = y;
+        } catch (error) {
+          gameover = true;
+        }
 
         // Posicion food + set Score
         if (x == food.x && y == food.y) {
@@ -591,16 +596,9 @@
 
         // Posicion dietFood + remover tamaño
         if (x == dietFood.x && y == dietFood.y) {
+          bgGif("brocoli");
           setDietFood();
-
-          const diet = Math.floor(Math.random() * 20) + 1;
-
-          for (let k = 0; k < diet; k++) {
-            player.pop();
-          }
-
-          if (player.length == 0) gameover = true;
-          else bgGif("brocoli");
+          doDiet();
         }
 
         // Renderizar jugador & Foods
@@ -697,7 +695,7 @@
         } else {
           // Asignacion de texto
           txt0 = "<small><i>hmmm..</i></small>";
-          txt1 = "Hacer dieta no siempre es bueno.";
+          txt1 = "Al parecer hacer dieta no siempre <br/>es bueno.";
           txt2 = "Vale.";
           txt3 = "<small>No entendi</small>";
 
@@ -764,6 +762,30 @@
           if (food.x == dietFood.x && food.y == dietFood.y) oc = false;
 
           if (map[dietFood.y][dietFood.x] == "x") oc = false;
+        }
+      }
+
+      // Diet Event
+      async function doDiet(x) {
+        const diet = Math.floor(Math.random() * 20) + 1;
+
+        for (let k = 0; k < diet; k++) {
+          const _size = player.length;
+
+          if (_size == 0) {
+            gameover = true;
+            break;
+          }
+
+          _x = player[_size - 1].x;
+          _y = player[_size - 1].y;
+
+          player.pop();
+
+          $("#" + _x + "-" + _y).attr("style", "background-color: black");
+          $("#" + _x + "-" + _y).text(" ");
+
+          await sleep(300);
         }
       }
     }
